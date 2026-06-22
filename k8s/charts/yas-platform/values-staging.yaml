@@ -1,0 +1,86 @@
+global:
+  domain: staging.yas.local
+  imageTag: v1.0.0
+  environment: staging
+
+yas-configuration:
+  enabled: true
+
+# Nhân bản lên 2 replicas để đảm bảo High Availability (HA) mức cơ bản khi demo
+product:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-product, tag: v1.0.0 }
+    resources:
+      requests: { cpu: 50m, memory: 200Mi }
+      limits: { cpu: 400m, memory: 512Mi }
+
+media:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-media, tag: v1.0.0 }
+
+location:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-location, tag: v1.0.0 }
+
+customer:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-customer, tag: v1.0.0 }
+
+cart:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-cart, tag: v1.0.0 }
+
+inventory:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-inventory, tag: v1.0.0 }
+
+rating:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-rating, tag: v1.0.0 }
+
+promotion:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-promotion, tag: v1.0.0 }
+
+tax:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-tax, tag: v1.0.0 }
+
+order:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-order, tag: v1.0.0 }
+
+payment:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-payment, tag: v1.0.0 }
+
+storefront-bff:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-storefront-bff, tag: v1.0.0 }
+
+storefront-ui:
+  ui:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-storefront-ui, tag: v1.0.0 }
+
+backoffice-bff:
+  backend:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-backoffice-bff, tag: v1.0.0 }
+
+backoffice-ui:
+  ui:
+    replicaCount: 2
+    image: { repository: <DOCKERHUB_USERNAME>/yas-backoffice-ui, tag: v1.0.0 }
