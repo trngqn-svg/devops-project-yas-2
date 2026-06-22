@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgresql-credentials
+type: Opaque
+stringData:
+  username: {{ .Values.postgresql.username | quote }}
+  password: {{ .Values.postgresql.password | quote }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-init
+data:
+  01-create-databases.sql: |
+    CREATE DATABASE keycloak;
+    CREATE DATABASE media;
+    CREATE DATABASE product;
+    CREATE DATABASE cart;
+    CREATE DATABASE rating;
+    CREATE DATABASE "order";
+    CREATE DATABASE location;
+    CREATE DATABASE inventory;
+    CREATE DATABASE promotion;
+    CREATE DATABASE tax;
+    CREATE DATABASE customer;
+    CREATE DATABASE payment;
+    CREATE DATABASE webhook;
+    CREATE DATABASE recommendation;
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  labels:
+    app.kubernetes.io/name: postgresql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: {{ .Values.postgresql.image | quote }}
+          imagePullPolicy: IfNotPresent
+          args: ["postgres", "-c", "max_connections=300"]
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: password
+          ports:
+            - name: postgresql
+              containerPort: 5432
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", {{ .Values.postgresql.username | quote }}]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.postgresql.resources | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+            - name: init
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: data
+          hostPath:
+            path: {{ .Values.postgresql.storage.hostPath | quote }}
+            type: DirectoryOrCreate
+        - name: init
+          configMap:
+            name: postgresql-init
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+spec:
+  selector:
+    app.kubernetes.io/name: postgresql
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+

@@ -1,86 +1,114 @@
+# Staging intentionally stays at one replica because the assignment cluster
+# has only one worker. Replace the tag with the release tag produced by CI.
 global:
   domain: staging.yas.local
   imageTag: v1.0.0
   environment: staging
 
+# Different ports allow dev and staging Services to coexist. To save RAM,
+# scale dev to zero before starting all staging Deployments.
+nodePorts:
+  enabled: true
+  storefront: 30085
+  backoffice: 30086
+  api: 30087
+
 yas-configuration:
   enabled: true
 
-# Nhân bản lên 2 replicas để đảm bảo High Availability (HA) mức cơ bản khi demo
 product:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-product, tag: v1.0.0 }
-    resources:
-      requests: { cpu: 50m, memory: 200Mi }
-      limits: { cpu: 400m, memory: 512Mi }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-product, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: &backendResources
+      requests: { cpu: 25m, memory: 160Mi }
+      limits: { cpu: 300m, memory: 384Mi }
 media:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-media, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-media, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 location:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-location, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-location, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 customer:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-customer, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-customer, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 cart:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-cart, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-cart, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 inventory:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-inventory, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-inventory, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 rating:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-rating, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-rating, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 promotion:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-promotion, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-promotion, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 tax:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-tax, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-tax, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 order:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-order, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-order, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 payment:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-payment, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-payment, tag: latest }
+    serviceMonitor: { enabled: false }
+    resources: *backendResources
 storefront-bff:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-storefront-bff, tag: v1.0.0 }
-
-storefront-ui:
-  ui:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-storefront-ui, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-storefront-bff, tag: latest }
+    serviceMonitor: { enabled: false }
+    ingress: { enabled: false }
+    resources: *backendResources
 backoffice-bff:
   backend:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-backoffice-bff, tag: v1.0.0 }
-
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-backoffice-bff, tag: latest }
+    serviceMonitor: { enabled: false }
+    ingress: { enabled: false }
+    resources: *backendResources
+storefront-ui:
+  ui:
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-storefront, tag: latest }
+    resources:
+      requests: { cpu: 25m, memory: 128Mi }
+      limits: { cpu: 200m, memory: 256Mi }
 backoffice-ui:
   ui:
-    replicaCount: 2
-    image: { repository: <DOCKERHUB_USERNAME>/yas-backoffice-ui, tag: v1.0.0 }
+    replicaCount: 1
+    image: { repository: ghcr.io/nashtech-garage/yas-backoffice, tag: latest }
+    resources:
+      requests: { cpu: 25m, memory: 128Mi }
+      limits: { cpu: 200m, memory: 256Mi }

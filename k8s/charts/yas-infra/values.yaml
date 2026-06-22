@@ -1,0 +1,32 @@
+# These defaults are for a classroom/demo cluster only. Override every
+# password with a private values file before using this chart elsewhere.
+postgresql:
+  image: postgres:16-alpine
+  username: yasadminuser
+  password: admin
+  storage:
+    # The kubeadm assignment has one worker and may not have a dynamic
+    # StorageClass. hostPath keeps the database on that worker.
+    hostPath: /var/lib/yas/postgresql
+  resources:
+    requests: { cpu: 100m, memory: 384Mi }
+    limits: { cpu: "1", memory: 1Gi }
+
+redis:
+  image: redis:7.4.1-alpine
+  password: redis
+  resources:
+    requests: { cpu: 25m, memory: 64Mi }
+    limits: { cpu: 200m, memory: 256Mi }
+
+keycloak:
+  image: quay.io/keycloak/keycloak:26.0.2
+  adminUsername: admin
+  adminPassword: admin
+  nodePort:
+    enabled: true
+    port: 30088
+  resources:
+    requests: { cpu: 100m, memory: 384Mi }
+    limits: { cpu: 750m, memory: 1Gi }
+

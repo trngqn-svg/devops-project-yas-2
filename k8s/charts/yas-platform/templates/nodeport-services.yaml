@@ -1,41 +1,45 @@
+{{- if .Values.nodePorts.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
   name: storefront-nodeport
-  namespace: {{ .Release.Namespace }}
 spec:
   type: NodePort
   selector:
-    app.kubernetes.io/name: storefront-ui
+    # The BFF proxies both /api/* and all remaining paths to storefront-ui.
+    app.kubernetes.io/name: storefront-bff
+    app.kubernetes.io/instance: {{ .Release.Name }}
   ports:
     - port: 80
-      targetPort: 3000
-      nodePort: 30080
+      targetPort: http
+      nodePort: {{ .Values.nodePorts.storefront }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: backoffice-nodeport
-  namespace: {{ .Release.Namespace }}
 spec:
   type: NodePort
   selector:
-    app.kubernetes.io/name: backoffice-ui
+    # The BFF proxies both /api/* and all remaining paths to backoffice-ui.
+    app.kubernetes.io/name: backoffice-bff
+    app.kubernetes.io/instance: {{ .Release.Name }}
   ports:
     - port: 80
-      targetPort: 3000
-      nodePort: 30081
+      targetPort: http
+      nodePort: {{ .Values.nodePorts.backoffice }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: api-gateway-nodeport
-  namespace: {{ .Release.Namespace }}
 spec:
   type: NodePort
   selector:
     app.kubernetes.io/name: storefront-bff
+    app.kubernetes.io/instance: {{ .Release.Name }}
   ports:
     - port: 80
-      targetPort: 8080
-      nodePort: 30082 
+      targetPort: http
+      nodePort: {{ .Values.nodePorts.api }}
+{{- end }}

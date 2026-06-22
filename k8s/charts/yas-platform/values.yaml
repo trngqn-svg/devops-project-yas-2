@@ -1,35 +1,15 @@
+# Shared defaults. Environment-specific image tags and NodePorts live in
+# values-dev.yaml and values-staging.yaml.
 global:
-  domain: yas.local.com
+  domain: yas.local
   imageTag: latest
-  environment: production
+  environment: dev
 
-# Cấu hình mặc định cho các sub-charts nếu không bị ghi đè
+nodePorts:
+  enabled: false
+  storefront: 30080
+  backoffice: 30081
+  api: 30082
+
 yas-configuration:
   enabled: true
-
-product:
-  backend:
-    replicaCount: 2
-    image:
-      repository: your-registry/yas-product
-      tag: latest
-      pullPolicy: IfNotPresent
-    serviceMonitor:
-      enabled: true
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 500m
-        memory: 512Mi
-
-# Các dịch vụ nặng được tắt mặc định theo thiết kế hệ thống tối giản giai đoạn đầu
-search:
-  enabled: false
-webhook:
-  enabled: false
-recommendation:
-  enabled: false
-sampledata:
-  enabled: false

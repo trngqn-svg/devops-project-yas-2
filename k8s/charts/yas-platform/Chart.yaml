@@ -7,7 +7,7 @@ appVersion: "1.0.0"
 
 dependencies:
   - name: yas-configuration
-    version: 0.4.0
+    version: 0.5.0
     repository: file://../yas-configuration
 
   - name: product
