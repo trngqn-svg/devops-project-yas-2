@@ -15,6 +15,7 @@ for chart in "${charts[@]}"; do
   helm dependency build "$CHARTS_DIR/$chart"
 done
 
-echo "Building umbrella chart dependencies"
-helm dependency build "$CHARTS_DIR/yas-platform"
-
+echo "Updating umbrella chart dependencies"
+# `update` regenerates Chart.lock when Chart.yaml changes. Using `build` here
+# would fail on a fresh clone if a teammate committed an older lock file.
+helm dependency update "$CHARTS_DIR/yas-platform"
