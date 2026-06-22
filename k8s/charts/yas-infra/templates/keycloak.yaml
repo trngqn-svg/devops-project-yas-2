@@ -81,6 +81,36 @@ spec:
       labels:
         app.kubernetes.io/name: identity
     spec:
+      # PostgreSQL and Keycloak are installed in the same Helm release.
+      # Wait for the actual Keycloak database, not only the PostgreSQL pod,
+      # to avoid JDBC acquisition timeouts during the first installation.
+      initContainers:
+        - name: wait-for-postgresql
+          image: {{ .Values.postgresql.image | quote }}
+          command:
+            - sh
+            - -c
+            - |
+              until PGPASSWORD="$POSTGRES_PASSWORD" \
+                pg_isready \
+                  --host=postgresql \
+                  --port=5432 \
+                  --username="$POSTGRES_USER" \
+                  --dbname=keycloak; do
+                echo "Waiting for the Keycloak PostgreSQL database..."
+                sleep 5
+              done
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: password
       containers:
         - name: keycloak
           image: {{ .Values.keycloak.image | quote }}
@@ -150,4 +180,3 @@ spec:
       targetPort: http
       nodePort: {{ .Values.keycloak.nodePort.port }}
 {{- end }}
-
