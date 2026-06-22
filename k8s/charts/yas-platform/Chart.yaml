@@ -27,7 +27,7 @@ dependencies:
     repository: file://../customer
 
   - name: cart
-    version: 0.1.0
+    version: 0.2.0
     repository: file://../cart
 
   - name: inventory
@@ -47,11 +47,11 @@ dependencies:
     repository: file://../tax
 
   - name: order
-    version: 0.1.0
+    version: 0.2.0
     repository: file://../order
 
   - name: payment
-    version: 0.1.0
+    version: 0.2.0
     repository: file://../payment
 
   - name: storefront-bff
