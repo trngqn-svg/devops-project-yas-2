@@ -6,10 +6,9 @@ global:
 yas-configuration:
   enabled: true
 
-# --- CẤU HÌNH CHI TIẾT CHO TỪNG SUB-CHART (Ghi đè giá trị mặc định) ---
-
 product:
   backend:
+    enabled: true
     replicaCount: 1
     image:
       repository: <DOCKERHUB_USERNAME>/yas-product
@@ -19,113 +18,145 @@ product:
     autoscaling:
       enabled: false
     resources:
-      requests: { cpu: 25m, memory: 160Mi }
-      limits: { cpu: 300m, memory: 384Mi }
-    env:
-      media_uri: "http://media.dev"
-      rating_uri: "http://rating.dev"
+      requests:
+        cpu: 25m
+        memory: 160Mi
+      limits:
+        cpu: 300m
+        memory: 384Mi
 
 media:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-media, tag: latest }
-    serviceMonitor: { enabled: false }
-    resources:
-      requests: { cpu: 25m, memory: 128Mi }
-      limits: { cpu: 200m, memory: 256Mi }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-media
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 location:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-location, tag: latest }
-    serviceMonitor: { enabled: false }
-    resources:
-      requests: { cpu: 25m, memory: 128Mi }
-      limits: { cpu: 200m, memory: 256Mi }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-location
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 customer:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-customer, tag: latest }
-    serviceMonitor: { enabled: false }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-customer
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 cart:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-cart, tag: latest }
-    serviceMonitor: { enabled: false }
-    env:
-      product_uri: "http://product.dev"
-      media_uri: "http://media.dev"
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-cart
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 inventory:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-inventory, tag: latest }
-    serviceMonitor: { enabled: false }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-inventory
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 rating:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-rating, tag: latest }
-    serviceMonitor: { enabled: false }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-rating
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 promotion:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-promotion, tag: latest }
-    serviceMonitor: { enabled: false }
-    # Sửa lỗi typo cũ của hệ thống (uri: http://protion -> promotion) tại đây hoặc trong template code:
-    uri: "http://promotion"
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-promotion
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 tax:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-tax, tag: latest }
-    serviceMonitor: { enabled: false }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-tax
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 order:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-order, tag: latest }
-    serviceMonitor: { enabled: false }
-    env:
-      cart_uri: "http://cart.dev"
-      customer_uri: "http://customer.dev"
-      product_uri: "http://product.dev"
-      tax_uri: "http://tax.dev"
-      promotion_uri: "http://promotion.dev"
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-order
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 payment:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-payment, tag: latest }
-    serviceMonitor: { enabled: false }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-payment
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 storefront-bff:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-storefront-bff, tag: latest }
-    serviceMonitor: { enabled: false }
-
-storefront-ui:
-  ui:
-    replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-storefront-ui, tag: latest }
-    resources:
-      requests: { cpu: 25m, memory: 128Mi }
-      limits: { cpu: 200m, memory: 256Mi }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-storefront-bff
+      tag: latest
+    serviceMonitor:
+      enabled: false
 
 backoffice-bff:
   backend:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-backoffice-bff, tag: latest }
-    serviceMonitor: { enabled: false }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-backoffice-bff
+      tag: latest
+    serviceMonitor:
+      enabled: false
+
+storefront-ui:
+  ui:
+    enabled: true
+    replicaCount: 1
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-storefront-ui
+      tag: latest
 
 backoffice-ui:
   ui:
+    enabled: true
     replicaCount: 1
-    image: { repository: <DOCKERHUB_USERNAME>/yas-backoffice-ui, tag: latest }
-    resources:
-      requests: { cpu: 25m, memory: 128Mi }
-      limits: { cpu: 200m, memory: 256Mi }
+    image:
+      repository: <DOCKERHUB_USERNAME>/yas-backoffice-ui
+      tag: latest
