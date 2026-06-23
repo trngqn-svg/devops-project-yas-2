@@ -6,8 +6,9 @@ metadata:
 spec:
   type: NodePort
   selector:
-    # The BFF proxies both /api/* and all remaining paths to storefront-ui.
-    app.kubernetes.io/name: storefront-bff
+    # Browser traffic should open the Next.js storefront UI directly.
+    # API traffic remains exposed separately through api-gateway-nodeport.
+    app.kubernetes.io/name: storefront-ui
     app.kubernetes.io/instance: {{ .Release.Name }}
   ports:
     - port: 80
@@ -21,8 +22,8 @@ metadata:
 spec:
   type: NodePort
   selector:
-    # The BFF proxies both /api/* and all remaining paths to backoffice-ui.
-    app.kubernetes.io/name: backoffice-bff
+    # Browser traffic should open the Next.js backoffice UI directly.
+    app.kubernetes.io/name: backoffice-ui
     app.kubernetes.io/instance: {{ .Release.Name }}
   ports:
     - port: 80
