@@ -90,6 +90,18 @@ lifecycle:
 
 terminationGracePeriodSeconds: 45
 
+# Spring Boot services are slow to boot on the low-cost GCP worker used for
+# this assignment, especially while Liquibase/JPA initializes the database.
+# startupProbe disables liveness/readiness failures until the management port
+# is actually available, avoiding CrashLoopBackOff during normal startup.
+startupProbe:
+  periodSeconds: 10
+  failureThreshold: 90
+  successThreshold: 1
+  httpGet:
+    path: /actuator/health/liveness
+    port: metric
+
 livenessProbe:
   periodSeconds: 10
   failureThreshold: 12
