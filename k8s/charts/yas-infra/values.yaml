@@ -23,10 +23,13 @@ keycloak:
   image: quay.io/keycloak/keycloak:26.0.2
   adminUsername: admin
   adminPassword: admin
+  # Set to true only once on a fresh PostgreSQL volume to create the Yas realm.
+  # After the log shows "Realm 'Yas' imported", set it back to false; otherwise
+  # Keycloak may crash on every restart while re-importing the same realm.
+  importRealm: false
   nodePort:
     enabled: true
     port: 30088
   resources:
     requests: { cpu: 100m, memory: 384Mi }
     limits: { cpu: 750m, memory: 1Gi }
-

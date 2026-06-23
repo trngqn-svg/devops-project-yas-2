@@ -119,11 +119,15 @@ spec:
       containers:
         - name: keycloak
           image: {{ .Values.keycloak.image | quote }}
-          # The Yas realm is imported during the first bootstrap run.
-          # Keep normal restarts/Helm upgrades on start-dev only; repeatedly
-          # running --import-realm on this small lab cluster can crash Keycloak
-          # with "Session not bound to a realm" after the realm is already saved.
+          # Use --import-realm only once on a fresh PostgreSQL volume. After the
+          # realm is saved, keep normal restarts/Helm upgrades on start-dev only;
+          # repeatedly importing the same realm can crash Keycloak with
+          # "Session not bound to a realm".
+          {{- if .Values.keycloak.importRealm }}
+          args: ["start-dev", "--import-realm"]
+          {{- else }}
           args: ["start-dev"]
+          {{- end }}
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               value: {{ .Values.keycloak.adminUsername | quote }}
