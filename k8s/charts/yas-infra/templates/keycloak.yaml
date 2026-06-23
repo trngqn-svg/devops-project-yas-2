@@ -73,6 +73,11 @@ metadata:
     app.kubernetes.io/name: identity
 spec:
   replicas: 1
+  # Realm import must never run concurrently in two Keycloak pods. Recreate
+  # also avoids the temporary second pod that a RollingUpdate would require
+  # on this small single-worker assignment cluster.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: identity
@@ -114,7 +119,11 @@ spec:
       containers:
         - name: keycloak
           image: {{ .Values.keycloak.image | quote }}
-          args: ["start-dev", "--import-realm"]
+          # The Yas realm is imported during the first bootstrap run.
+          # Keep normal restarts/Helm upgrades on start-dev only; repeatedly
+          # running --import-realm on this small lab cluster can crash Keycloak
+          # with "Session not bound to a realm" after the realm is already saved.
+          args: ["start-dev"]
           env:
             - name: KC_BOOTSTRAP_ADMIN_USERNAME
               value: {{ .Values.keycloak.adminUsername | quote }}
@@ -137,6 +146,13 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+          # Keycloak/Quarkus can need a few minutes to open port 8080 on the
+          # low-cost GCP VMs used for this assignment.
+          startupProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 10
+            failureThreshold: 60
           readinessProbe:
             tcpSocket:
               port: http
